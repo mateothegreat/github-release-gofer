@@ -1,6 +1,6 @@
 # GitHub Release Gofer �
 
-![alt text](image.png)
+![alt text](logo.png)
 
 Gofer is a tool for downloading, upgrading, and installing GitHub releases.
 
