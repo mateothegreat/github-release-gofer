@@ -27,5 +27,6 @@ func init() {
 
 func main() {
 	root.AddCommand(commands.Upgrade)
+	root.AddCommand(commands.List)
 	root.Execute()
 }

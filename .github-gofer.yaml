@@ -9,3 +9,16 @@ repos:
       - pattern: k9s # File name or regex (optional).
         path: ~/.bin # Local path for this file (optional).
         mode: 0755 # File mode (optional).
+  - name: istioctl
+    owner: istio
+    repo: istio
+    download: istioctl.*osx-arm64.tar.gz$
+    matchers:
+      - pattern: istioctl
+        mode: 0755
+  - name: golangci-lint
+    owner: golangci
+    repo: golangci-lint
+    download: darwin-arm64.tar.gz$
+    matchers:
+      - pattern: golangci-lint

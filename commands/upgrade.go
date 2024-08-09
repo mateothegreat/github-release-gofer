@@ -7,10 +7,9 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strconv"
 
-	"github.com/google/go-github/v63/github"
 	"github.com/mateothegreat/github-release-gofer/config"
+	gh "github.com/mateothegreat/github-release-gofer/github"
 	"github.com/mateothegreat/go-multilog/multilog"
 	"github.com/mateothegreat/go-util/files"
 	"github.com/mholt/archiver/v4"
@@ -60,22 +59,19 @@ var Upgrade = &cobra.Command{
 			})
 		}
 
-		config, err := config.GetConfig()
+		cfg, err := config.GetConfig()
 		if err != nil {
 			multilog.Fatal("upgrade", "failed to get config", map[string]interface{}{
 				"error": err,
 			})
 		}
 
-		var client *github.Client
-		if token != "" {
-			client = github.NewClient(nil).WithAuthToken(token)
-		} else {
-			client = github.NewClient(nil)
-		}
+		client := gh.NewClient(token)
 
-		for _, repo := range config.Repos {
-			latest, _, err := client.Repositories.GetLatestRelease(context.Background(), repo.Owner, repo.Name)
+		// Get the latest release for each repository.
+		for _, repo := range cfg.Repos {
+			// Get the latest release.
+			latest, _, err := client.Repositories.GetLatestRelease(context.Background(), repo.Owner, repo.Repo)
 			if err != nil {
 				multilog.Fatal("upgrade", "failed to get latest release", map[string]interface{}{
 					"error": err,
@@ -83,6 +79,7 @@ var Upgrade = &cobra.Command{
 				})
 			}
 
+			// Filter the assets to download.
 			assets := repo.Match(latest.Assets)
 			if len(assets) == 0 {
 				multilog.Warn("upgrade", "no assets found", map[string]interface{}{
@@ -103,6 +100,7 @@ var Upgrade = &cobra.Command{
 				}
 				req.Header.Set("Accept", "application/octet-stream")
 
+				// Download the asset.
 				resp, err := client.Do(req)
 				if err != nil {
 					multilog.Fatal("upgrade", "failed to download release asset", map[string]interface{}{
@@ -132,16 +130,21 @@ var Upgrade = &cobra.Command{
 					err = ex.Extract(context.Background(), bytes.NewReader(body), nil, func(ctx context.Context, f archiver.File) error {
 						for _, matcher := range repo.Matchers {
 							if matcher.Match(f.Name()) {
-								destPath := filepath.Join(matcher.Path, f.Name())
-								mode, err := strconv.ParseUint(matcher.Mode, 8, 32)
+								base, err := config.GetStringFromSlice(matcher.Path, cfg.Path, "~/.bin")
+								if err != nil {
+									base = "~/.bin"
+								}
+
+								mode, err := config.GetIntFromSlice(0, 0777, matcher.Mode, cfg.Mode, 0755)
+								if err != nil {
+									mode = 0755
+								}
+
+								dest, err := os.OpenFile(files.ExpandPath(filepath.Join(base, f.Name())), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.FileMode(mode))
 								if err != nil {
 									return err
 								}
-								destFile, err := os.OpenFile(files.ExpandPath(destPath), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.FileMode(mode))
-								if err != nil {
-									return err
-								}
-								defer destFile.Close()
+								defer dest.Close()
 
 								rc, err := f.Open()
 								if err != nil {
@@ -149,7 +152,7 @@ var Upgrade = &cobra.Command{
 								}
 								defer rc.Close()
 
-								_, err = io.Copy(destFile, rc)
+								_, err = io.Copy(dest, rc)
 								if err != nil {
 									return err
 								}
