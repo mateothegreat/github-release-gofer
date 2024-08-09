@@ -1,0 +1,11 @@
+path: ~/.bin # Global path for all repos (optional).
+repos:
+  - name: k9s
+    owner: derailed
+    repo: k9s
+    path: ~/.bin # Local path for this repo (optional).
+    download: ^k9s_Darwin_arm64.tar.gz$ # Download file name or regex (optional).
+    matchers:
+      - pattern: k9s # File name or regex (optional).
+        path: ~/.bin # Local path for this file (optional).
+        mode: 0755 # File mode (optional).
