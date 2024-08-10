@@ -16,6 +16,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type UpgradeFlags struct {
+	GlobalFlags
+	Token string
+	Owner string
+	Repo  string
+	Path  string
+}
+
 type File struct {
 	Path      string
 	Filename  string
@@ -80,7 +88,7 @@ var Upgrade = &cobra.Command{
 			}
 
 			// Filter the assets to download.
-			assets := repo.Match(latest.Assets)
+			assets := repo.Match(latest.Assets, true)
 			if len(assets) == 0 {
 				multilog.Warn("upgrade", "no assets found", map[string]interface{}{
 					"repo": repo,
@@ -129,15 +137,15 @@ var Upgrade = &cobra.Command{
 				if ex, ok := format.(archiver.Extractor); ok {
 					err = ex.Extract(context.Background(), bytes.NewReader(body), nil, func(ctx context.Context, f archiver.File) error {
 						for _, matcher := range repo.Matchers {
-							if matcher.Match(f.Name()) {
+							if matcher.Match(f.Name(), true) {
 								base, err := config.GetStringFromSlice(matcher.Path, cfg.Path, "~/.bin")
 								if err != nil {
 									base = "~/.bin"
 								}
 
-								mode, err := config.GetIntFromSlice(0, 0777, matcher.Mode, cfg.Mode, 0755)
+								mode, err := config.GetIntFromSlice(666, 777, matcher.Mode, cfg.Mode, 755)
 								if err != nil {
-									mode = 0755
+									mode = 755
 								}
 
 								dest, err := os.OpenFile(files.ExpandPath(filepath.Join(base, f.Name())), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.FileMode(mode))

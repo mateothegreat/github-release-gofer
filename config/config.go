@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/go-github/v63/github"
 	"github.com/mateothegreat/go-config/config"
+	"github.com/mateothegreat/go-multilog/multilog"
 )
 
 // Config is the configuration for the tailer.
@@ -52,14 +53,22 @@ type Matcher struct {
 //
 // Returns:
 //   - A slice of assets that match the pattern.
-func (r *Repo) Match(assets []*github.ReleaseAsset) []*github.ReleaseAsset {
+func (r *Repo) Match(assets []*github.ReleaseAsset, verbose bool) []*github.ReleaseAsset {
 	matches := []*github.ReleaseAsset{}
 	for _, asset := range assets {
+		multilog.Debug("Match", "matching asset", map[string]interface{}{
+			"asset":   asset.GetName(),
+			"pattern": r.Download,
+		})
 		matched, err := regexp.MatchString(r.Download, asset.GetName())
 		if err != nil {
 			continue
 		}
 		if matched {
+			multilog.Debug("Match", "matched asset", map[string]interface{}{
+				"asset":   asset.GetName(),
+				"pattern": r.Download,
+			})
 			matches = append(matches, asset)
 		}
 	}
@@ -73,7 +82,11 @@ func (r *Repo) Match(assets []*github.ReleaseAsset) []*github.ReleaseAsset {
 //
 // Returns:
 //   - A boolean indicating if the file matches the pattern.
-func (m *Matcher) Match(file string) bool {
+func (m *Matcher) Match(file string, verbose bool) bool {
+	multilog.Debug("Match", "matching file", map[string]interface{}{
+		"file":    file,
+		"pattern": m.Pattern,
+	})
 	matched, err := regexp.MatchString(m.Pattern, file)
 	if err != nil {
 		return false

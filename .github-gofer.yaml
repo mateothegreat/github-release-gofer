@@ -8,17 +8,31 @@ repos:
     matchers:
       - pattern: k9s # File name or regex (optional).
         path: ~/.bin # Local path for this file (optional).
-        mode: 0755 # File mode (optional).
+        mode: 755 # File mode (optional).
   - name: istioctl
     owner: istio
     repo: istio
     download: istioctl.*osx-arm64.tar.gz$
     matchers:
       - pattern: istioctl
-        mode: 0755
+        mode: 755
   - name: golangci-lint
     owner: golangci
     repo: golangci-lint
     download: darwin-arm64.tar.gz$
     matchers:
       - pattern: golangci-lint
+  - name: ktop
+    owner: vladimirvivien
+    repo: ktop
+    download: ktop_v0.3.7_darwin_arm64.tar.gz
+    matchers:
+      - pattern: ^ktop$
+        mode: 755
+  - name: dbee
+    owner: murat-cileli
+    repo: dbee
+    download: .*_Darwin_arm64.tar.gz$
+    matchers:
+      - pattern: dbee
+        mode: 755

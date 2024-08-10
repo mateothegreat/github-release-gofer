@@ -56,8 +56,7 @@ var List = &cobra.Command{
 			})
 		}
 
-		var client *github.Client
-		client = github.NewClient(nil)
+		client := github.NewClient(nil)
 
 		// Get the latest release for each repository.
 		for _, repo := range config.Repos {
