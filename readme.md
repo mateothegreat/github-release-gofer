@@ -1,4 +1,4 @@
-# GitHub Release Gofer �
+# GitHub Release Gofer 🚀
 
 ![alt text](logo.png)
 
