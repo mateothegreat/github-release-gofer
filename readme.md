@@ -4,7 +4,13 @@
 
 Gofer is a tool for downloading, upgrading, and installing GitHub releases.
 
-![alt text](Cursor-000203.png)
+![alt text](screenshot.png)
+
+## Installation
+
+```bash
+go install github.com/mateothegreat/go-github-release-gofer@latest
+```
 
 ## Usage
 
