@@ -1,4 +1,4 @@
-module github.com/mateothegreat/github-release-gofer
+module github.com/mateothegreat/go-github-release-gofer
 
 go 1.22.0
 
