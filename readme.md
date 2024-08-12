@@ -9,7 +9,7 @@ Gofer is a tool for downloading, upgrading, and installing GitHub releases.
 ## Installation
 
 ```bash
-go install github.com/mateothegreat/go-github-release-gofer@latest
+go install github.com/mateothegreat/github-release-gofer@latest
 ```
 
 ## Usage
@@ -40,7 +40,7 @@ Gofer is configured using a `.gofer.yaml` file in the current directory or any p
 
 ## Example
 
-Running `gofer upgrade` will download the latest release(s) configured in the `.gofer.yaml` file and install it to the configured path:
+Running `gofer upgrade` will download the latest release(s) configured in the `.gofer.yaml` file and install it to the configured path, or home directory by default:
 
 ```bash
 gofer upgrade
