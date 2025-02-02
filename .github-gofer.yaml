@@ -36,3 +36,10 @@ repos:
     matchers:
       - pattern: dbee
         mode: 755
+  - name: pdd
+    owner: jarun
+    repo: pdd
+    download: .*_Darwin_arm64.tar.gz$
+    matchers:
+      - pattern: pdd
+        mode: 755
