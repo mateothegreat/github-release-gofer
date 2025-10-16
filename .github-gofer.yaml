@@ -1,5 +1,14 @@
 path: ~/.bin # Global path for all repos (optional).
 repos:
+  - name: mcp-lsp-bridge
+    owner: rockerBOO
+    repo: mcp-lsp-bridge
+    path: ~/.bin # Local path for this repo (optional).
+    download: ^.*Darwin # Download file name or regex (optional).
+    matchers:
+      - pattern: .* # File name or regex (optional).
+        path: ~/.bin # Local path for this file (optional).
+        mode: 755 # File mode (optional).
   - name: k9s
     owner: derailed
     repo: k9s
